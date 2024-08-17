@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SECRET_KEY=%dctubx9)ky1(p%n!brn2k)u5g81^4!h0bc=!cj_itsofq7i(f
+      - LANGFLOW_URL=http://langflow:8080
+    depends_on:
+      - redis
+      - langflow
+    networks:
+      - backend
+
+  redis:
+    image: redis:6
+    deploy:
+      replicas: 1
+    networks:
+      - backend
+
+  langflow:
+    image: your-langflow-image
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+  llm:
+    image: your-llm-image
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: overlay
